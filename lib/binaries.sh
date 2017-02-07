@@ -45,23 +45,10 @@ install_yarn() {
 }
 
 install_nodejs() {
-  local requested_version="6.9.4"
   local resolved_version="6.9.4"
   local dir="$2"
 
-  if needs_resolution "$requested_version"; then
-    BP_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
-    versions_as_json=$(ruby -e "require 'yaml'; print YAML.load_file('$BP_DIR/manifest.yml')['dependencies'].select {|dep| dep['name'] == 'node' }.map {|dep| dep['version']}")
-    default_version=$($BP_DIR/compile-extensions/bin/default_version_for $BP_DIR/manifest.yml node)
-    resolved_version=$(ruby $BP_DIR/lib/version_resolver.rb "$requested_version" "$versions_as_json" "$default_version")
-  fi
-
-  if [[ "$resolved_version" = "undefined" ]]; then
-    echo "Downloading and installing node $requested_version..."
-  else
-    echo "Downloading and installing node $resolved_version..."
-  fi
-
+  echo "Downloading and installing node $resolved_version..."
   local heroku_url="https://s3pository.heroku.com/node/v$resolved_version/node-v$resolved_version-$os-$cpu.tar.gz"
   local exit_code=0
   local filtered_url=""
@@ -108,15 +95,6 @@ download_failed() {
 
 install_npm() {
   local version="2.15.11"
-
-  if [ "$version" == "" ]; then
-    echo "Using default npm version: `npm --version`"
-  else
-    if [[ `npm --version` == "$version" ]]; then
-      echo "npm `npm --version` already installed with node"
-    else
-      echo "Downloading and installing npm $version (replacing version `npm --version`)..."
-      npm install --unsafe-perm --quiet -g npm@$version 2>&1 >/dev/null || download_failed $version
-    fi
-  fi
+  echo "Downloading and installing npm $version (replacing version `npm --version`)..."
+  npm install --unsafe-perm --quiet -g npm@$version 2>&1 >/dev/null || download_failed $version
 }
