@@ -45,8 +45,8 @@ install_yarn() {
 }
 
 install_nodejs() {
-  local requested_version="$1"
-  local resolved_version=$requested_version
+  local requested_version="6.9.4"
+  local resolved_version="6.9.4"
   local dir="$2"
 
   if needs_resolution "$requested_version"; then
@@ -107,7 +107,7 @@ download_failed() {
 }
 
 install_npm() {
-  local version="$1"
+  local version="2.15.11"
 
   if [ "$version" == "" ]; then
     echo "Using default npm version: `npm --version`"
